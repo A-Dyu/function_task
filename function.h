@@ -13,14 +13,7 @@ struct function<R (Args...)>{
     function(function&&) = default;
 
     template <typename T>
-    function(T val) {
-        if (fits_small_storage<T>) {
-            stg.set_static(std::forward<T>(val));
-        } else {
-            stg.set_dynamic(new T(std::forward<T>(val)));
-        }
-        stg.set_descriptor(functional_traits<T>::template get_type_descriptor<R, Args...>());
-    }
+    function(T val): stg(std::move(val)) {}
 
     function& operator=(function const& rhs) {
         if (this != &rhs) {
@@ -39,7 +32,7 @@ struct function<R (Args...)>{
     }
 
     explicit operator bool() const noexcept {
-        return stg.desc != empty_type_descriptor<R, Args...>();
+        return static_cast<bool>(stg);
     }
 
     R operator()(Args... args) const {
@@ -61,5 +54,5 @@ struct function<R (Args...)>{
     }
 
 private:
-    mutable storage<R, Args...> stg;
+    mutable function_structs::storage<R, Args...> stg;
 };
