@@ -43,6 +43,8 @@ namespace function_structs {
 
         storage &operator=(storage &&other) {
             if (this != &other) {
+                storage safe;
+                desc->move(this, &safe);
                 other.desc->move(&other, this);
             }
             return *this;
@@ -86,7 +88,7 @@ namespace function_structs {
 
         template<typename T>
         T const *target() const noexcept {
-            if (check_target<T>()) {
+            if (check_no_target<T>()) {
                 return nullptr;
             }
             if constexpr (fits_small_storage < T >) {
@@ -98,7 +100,7 @@ namespace function_structs {
 
         template<typename T>
         T *target() noexcept {
-            if (check_target<T>()) {
+            if (check_no_target<T>()) {
                 return nullptr;
             }
             if constexpr (fits_small_storage < T >) {
@@ -126,7 +128,7 @@ namespace function_structs {
 
     private:
         template<typename T>
-        bool check_target() {
+        bool check_no_target() {
             return functional_traits<T>::template get_type_descriptor<R, Args...>() != desc ||
                    desc == empty_type_descriptor<R, Args...>();
         }

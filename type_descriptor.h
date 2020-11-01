@@ -1,5 +1,4 @@
 #pragma once
-#include "storage.h"
 
 struct bad_function_call : std::exception {
     char const *what() const noexcept override {

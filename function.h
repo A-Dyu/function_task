@@ -5,7 +5,7 @@ template <typename F>
 struct function;
 
 template <typename R, typename... Args>
-struct function<R (Args...)>{
+struct function<R (Args...)> {
     function() = default;
 
     function(function const&) = default;
